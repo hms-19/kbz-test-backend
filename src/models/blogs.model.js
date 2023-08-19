@@ -67,7 +67,8 @@ schema.methods = ({
         'avatar',
         'read_time',
         'tags',
-        'category'
+        'category',
+        'createdAt'
     ]
     let transformed = {}
 
@@ -82,7 +83,7 @@ schema.methods = ({
 
 schema.statics = ({
 
-  list({page = 1, per_page = 10, title = ''}){
+  list({page = 1, per_page = 10, title = '', category_id = '', tag_id = ''}){
 
     let populate = [
         {
@@ -101,15 +102,23 @@ schema.statics = ({
 
     let select = "-updatedAt -__v -_id"
 
+    let filter = {}
+        
     if(title != ''){
-      return this.find({title})
-        .populate(populate)
-        .select(select)
-        .sort({createdAt: -1 })
-        .exec();  
+        let regex = new RegExp(title, 'i') 
+
+        filter = {title: {$regex: regex}}
     }
-    
-    return this.find({})
+
+    if(category_id != ''){
+        filter = {category: category_id}
+    }
+
+    if(tag_id != ''){
+        filter = {tags: tag_id}
+    }
+
+    return this.find(filter)
       .populate(populate)
       .select(select)
       .sort({createdAt: -1 })

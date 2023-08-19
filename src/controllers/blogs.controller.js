@@ -10,11 +10,42 @@ const path = require('path');
 
 exports.list = async (req, res) => {
     try {
-        const blogs = await blogModel.list(req.body)
-        let total_count = await blogModel.find({}).countDocuments()
-        if(req.body.title){
-            total_count = await blogModel.find({title: req.body.title}).countDocuments()
+
+        let category_id = ''
+        let tag_id = ''
+
+        if(req.body.category_id){
+            let category = await categoriesModel.findOne({category_id: req.body.category_id})
+            category_id = category._id
         }
+
+        if(req.body.tag_id){
+            let tag = await tagsModel.findOne({tag_id: req.body.tag_id})
+            tag_id = tag._id
+        }
+
+        req.body.category_id = category_id
+        req.body.tag_id = tag_id
+
+        const blogs = await blogModel.list(req.body)
+        let filter = {}
+        
+        if(req.body.title != ''){
+            let regex = new RegExp(req.body.title, 'i') 
+
+            filter = {title: {$regex: regex}}
+        }
+
+        if(category_id != ''){
+            filter = {category: category_id}
+        }
+
+        if(tag_id != ''){
+            filter = {tag: tag_id}
+        }
+
+        let total_count = await blogModel.find(filter).countDocuments()
+
         let transformedData = []
         if(blogs.length > 0){
             transformedData = blogs.map(data => data.transform(data))
@@ -58,6 +89,9 @@ exports.create = async (req, res) => {
             }
 
             value.category = category._id
+
+            category.blogs_count = category.blogs_count + 1
+            await category.save()
 
             let tags = []
 
@@ -251,6 +285,19 @@ exports.delete = async (req, res) => {
         
         if(blog){
 
+            let category = await categoriesModel.findOne({_id: blog.category})
+
+            if(!category){
+                return res.send({
+                    status : 1,
+                    message: "Category Not Found"
+                });
+            }
+
+            
+            category.blogs_count = category.blogs_count - 1
+            await category.save()
+
             if(blog.avatar){
                 const key = path.basename(blog.avatar)
                 await deleteFileFromS3(key)
@@ -282,3 +329,4 @@ exports.delete = async (req, res) => {
         })
     }
 }
+

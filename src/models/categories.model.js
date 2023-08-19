@@ -6,6 +6,10 @@ const schema = new mongoose.Schema({
         type: String,
         required : true,
     },
+    blogs_count: {
+      type: Number,
+      default: 0
+    },
     category_id: Number,
 },{
     timestamps: true,
@@ -32,6 +36,7 @@ schema.methods = ({
   transform (data = this) {
     let fields = [
         'name',
+        'blogs_count'
     ]
     let transformed = {}
 
@@ -48,7 +53,7 @@ schema.statics = ({
 
   list({page = 1, per_page = 10}){
 
-    let select = "category_id name"
+    let select = "category_id name blogs_count"
 
     if(per_page == 'all'){
       return this.find({})
