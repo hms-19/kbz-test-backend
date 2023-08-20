@@ -153,7 +153,10 @@ exports.create = async (req, res) => {
 
 exports.detail = async (req, res) => {
     try {
-        const blog = await blogModel.findOne({blog_id: req.body.id})
+
+        let populate = blogModel.population()
+
+        const blog = await blogModel.findOne({blog_id: req.body.id}).populate(populate)
         
         if(blog){
 
