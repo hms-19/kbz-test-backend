@@ -166,7 +166,7 @@ exports.detail = async (req, res) => {
 
             return res.send({
                 status: 0,
-                data: blog.transform(blog,req.body?.lang)
+                data: blog.transform()
             })
         }
         else{

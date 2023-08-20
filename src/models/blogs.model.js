@@ -133,13 +133,13 @@ schema.statics = ({
             path: 'tags',
             select: {_id: 0, name: '$name', id: '$tag_id' },                    
             model: 'Tag',
-            options: { lean: true },
+            options: { lean: false },
         },
         {
             path: 'category',
             select: {_id: 0, name: '$name', id: '$category_id' },                    
             model: 'Category',
-            options: { lean: true },
+            options: { lean: false },
         },
     ]
 

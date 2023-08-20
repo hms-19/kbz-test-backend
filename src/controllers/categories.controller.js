@@ -64,7 +64,7 @@ exports.detail = async (req, res) => {
 
             return res.send({
                 status: 0,
-                data: category.transform(category,req.body?.lang)
+                data: category.transform()
             })
         }
         else{
