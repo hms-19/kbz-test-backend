@@ -131,15 +131,15 @@ schema.statics = ({
     let populate = [
         {
             path: 'tags',
-            select: {_id: 0, name: '$name', id: '$tag_id' },                    
+            select: 'name tag_id -_id',                    
             model: 'Tag',
-            options: { lean: false },
+            options: { lean: true },
         },
         {
             path: 'category',
-            select: {_id: 0, name: '$name', id: '$category_id' },                    
+            select: 'name category_id -_id',                    
             model: 'Category',
-            options: { lean: false },
+            options: { lean: true },
         },
     ]
 
