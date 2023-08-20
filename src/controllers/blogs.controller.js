@@ -16,12 +16,16 @@ exports.list = async (req, res) => {
 
         if(req.body.category_id){
             let category = await categoriesModel.findOne({category_id: req.body.category_id})
-            category_id = category._id
+            if(category){
+                category_id = category._id
+            }
         }
 
         if(req.body.tag_id){
             let tag = await tagsModel.findOne({tag_id: req.body.tag_id})
-            tag_id = tag._id
+            if(tag){
+                tag_id = tag._id
+            }
         }
 
         req.body.category_id = category_id
