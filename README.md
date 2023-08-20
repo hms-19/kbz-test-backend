@@ -4,7 +4,8 @@
 When you install ,
 
 1. RUN npm install
-2. RUN npm start
+2. Change NODE_ENV to development when you run in local
+3. RUN npm start
 
 
 
