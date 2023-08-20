@@ -4,7 +4,8 @@ const app = require('./config/express');
 const { env, port } = require('./config/vars');
 
 if (env === "production") {
-    // prodcution 
+    const httpServer = http.createServer(app);
+    httpServer.listen(port, () => console.log(`server started on port ${port} (${env})`));
 } else{
     const httpServer = http.createServer(app);
     httpServer.listen(port, () => console.log(`server started on port ${port} (${env})`));
