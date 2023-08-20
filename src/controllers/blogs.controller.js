@@ -41,7 +41,7 @@ exports.list = async (req, res) => {
         }
 
         if(tag_id != ''){
-            filter = {tag: tag_id}
+            filter = {tags: tag_id}
         }
 
         let total_count = await blogModel.find(filter).countDocuments()
