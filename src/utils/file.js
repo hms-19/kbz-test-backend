@@ -1,7 +1,6 @@
 const { getRandomNumbers } = require(".");
 const { uploadFileToS3, getFileStream } = require("../config/s3");
 const { file } = require("../config/vars");
-
 exports.getFileExtensionFromBase64 = (base64Data) => {
     const dataUrlRegex = /^data:image\/(\w+);base64,/;
     const matches = base64Data.match(dataUrlRegex);
@@ -19,7 +18,6 @@ exports.checkBase64FileSize = (base64Data)  => {
   const fileSizeInKB = fileSizeInBytes / 1024;
   return fileSizeInKB;
 }
-
 
 exports.isBase64Image = (str) => {
   const base64ImageRegex = /^data:image\/(jpeg|jpg|png|gif|webp|avif);base64,/;
