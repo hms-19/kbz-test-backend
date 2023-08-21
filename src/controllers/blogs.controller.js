@@ -197,75 +197,74 @@ exports.update = async (req, res) => {
                 errors
             });
         } else {
-            const blog = await blogModel.findOne({blog_id: value.id})
+            let blog = await blogModel.findOne({blog_id: value.id})
 
             if(blog){
 
                 let category = await categoriesModel.findOne({category_id: value.category_id})
 
-            if(!category){
-                return res.send({
-                    status : 1,
-                    message: "Category Not Found"
-                });
-            }
-
-            value.category = category._id
-
-            let tags = []
-
-            for(let i = 0; i < value.tag_ids.length; i++){
-                const tag = await tagsModel.findOne({tag_id: value.tag_ids[i]})
-                if(tag){
-                    tags.push(tag._id)
-                }
-                else{
+                if(!category){
                     return res.send({
-                        status: 1,
-                        message: "Tag Not Found !"
-                    })
-                }
-            }
-
-            value.tags = tags
-
-            let avatar = gravatar.url(value.name, {s: '100', r: 'x', d: 'retro'}, true)
-
-            if(value.avatar){
-                let result = await uploadFile(value.avatar)
-
-                if(result.status == 1){
-                    return res.send(result)
+                        status : 1,
+                        message: "Category Not Found"
+                    });
                 }
 
-                avatar = req.protocol + '://' + req.get('host') + '/images/'+result.data.Key
-            }
+                value.category = category._id
 
-            value.avatar = avatar
+                let tags = []
 
-            if(blog.avatar){
-                const key = path.basename(blog.avatar)
-                await deleteFileFromS3(key)
-            }
-
-            if(value.image){
-                let result = await uploadFile(value.image)
-
-                if(result.status == 1){
-                    return res.send(result)
+                for(let i = 0; i < value.tag_ids.length; i++){
+                    const tag = await tagsModel.findOne({tag_id: value.tag_ids[i]})
+                    if(tag){
+                        tags.push(tag._id)
+                    }
+                    else{
+                        return res.send({
+                            status: 1,
+                            message: "Tag Not Found !"
+                        })
+                    }
                 }
 
-                value.image = req.protocol + '://' + req.get('host') + '/images/'+result.data.Key
-            }
+                value.tags = tags
 
-            if(blog.image){
-                const key = path.basename(blog.image)
-                await deleteFileFromS3(key)
-            }
+                let avatar = gravatar.url(value.name, {s: '100', r: 'x', d: 'retro'}, true)
 
+                if(value.avatar){
+                    let result = await uploadFile(value.avatar)
 
-            await blogModel.findOneAndUpdate({blog_id: req.body.id},value,{returnOriginal: false})
-            
+                    if(result.status == 1){
+                        return res.send(result)
+                    }
+
+                    avatar = req.protocol + '://' + req.get('host') + '/images/'+result.data.Key
+                }
+
+                value.avatar = avatar
+
+                if(blog.avatar){
+                    const key = path.basename(blog.avatar)
+                    await deleteFileFromS3(key)
+                }
+
+                if(value.image){
+                    let result = await uploadFile(value.image)
+
+                    if(result.status == 1){
+                        return res.send(result)
+                    }
+
+                    value.image = req.protocol + '://' + req.get('host') + '/images/'+result.data.Key
+                }
+
+                if(blog.image){
+                    const key = path.basename(blog.image)
+                    await deleteFileFromS3(key)
+                }
+
+                await blogModel.findOneAndUpdate({blog_id: req.body.id},value,{returnOriginal: false})
+                
             return res.send({
                 status: 0,
                 message: 'Blog Updated Successfully !'
